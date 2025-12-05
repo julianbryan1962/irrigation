@@ -6,7 +6,7 @@ from time import sleep
 # Import the simple library specifically
 from umqtt.simple import MQTTClient 
 import ssl
-import micropython_ota
+#import micropython_ota
 
 sensor = dht.DHT22(Pin(9))
 ledr = Pin(6, Pin.OUT)
@@ -16,6 +16,9 @@ relay = Pin(7, Pin.OUT)
 
 ssid = "barchester_air"
 password = "Barchester@976"
+
+from ota import OTAUpdater
+firmware_url = "https://github.com/julianbryan1962/irrigation/"
 
 min_temp = 5
 max_temp = min_temp + 3
@@ -139,7 +142,7 @@ while True:
            ledb.value(0)
            relay.value(0)
            
-        sleep(57)
+        sleep(7)
         ledr.value(0)
         ledg.value(0)
         ledb.value(0)
@@ -153,6 +156,9 @@ while True:
         ledb.value(0)
         sleep(1)
         client.publish(b'test', tempstr.encode()) # Publish as bytes/encoded string
+        
+        ota_updater = OTAUpdater(SSID, PASSWORD, firmware_url, "greenhouse_controller.py")
+        ota_updater.download_and_install_update_if_available()
         
         
         #try:
